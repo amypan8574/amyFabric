@@ -1,0 +1,418 @@
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hyperledger Fabric  Application</title>
+    <link rel="icon" href="favicon.png" type="image/gif">
+
+    <!-- require jquery and bootstrap scripts -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.min.js"></script>
+
+    
+    
+    <!-- adding style here -->
+    <style type="text/css">
+      header{
+        background-color: lightgray;
+        font-size:20px;
+        padding:15px;
+      }
+      header, .form-group{
+        margin-bottom: 3%;
+      }
+      .form-group{
+        width:50%;
+      }
+      #body{
+        margin-left:3%;
+        margin-right:3%;
+      }
+      
+      .form-control{
+        margin: 8px;
+      }
+      #right_header{
+        width:20%;
+        font-size:15px;
+        margin-right:0px;
+      }
+      #left_header{
+        margin-left:0;
+        width:40%;
+        display:inline-block;
+      } 
+      #id {
+        width:49%;
+        display: inline-block;
+      }
+      table {
+        background: white;
+        border-collapse: collapse;
+        margin: 1.25em 0 0;
+        width: 100%;
+      }
+
+      table tr,
+      table th,
+      table td {
+        border: none;
+        border-bottom: 1px solid #e4ebeb;
+        font-family: 'Lato', sans-serif;
+        font-size: .875rem;
+      }
+
+      table th,
+      table td {
+        padding: 10px 12px;
+        text-align: left;
+      }
+
+      table th {
+        background: #56a2cf;
+        color: #ffffff;
+        text-transform: uppercase;
+      }
+
+      table tr td {
+        background: #eaf3f5;
+        color: #999999;
+      }
+
+      table tr:nth-of-type(2n+2) td {
+        background: #ffffff;
+      }
+
+      table.bt tfoot th,
+      table.bt tfoot td,
+      table.bt tbody td {
+        font-size: .8125rem;
+        padding: 0;
+      }
+
+      table.bt tfoot th:before,
+      table.bt tfoot td:before,
+      table.bt tbody td:before {
+        background: #56a2cf;
+        color: white;
+        margin-right: 10px;
+        padding: 2px 10px;
+      }
+
+      table.bt tfoot th .bt-content,
+      table.bt tfoot td .bt-content,
+      table.bt tbody td .bt-content {
+        display: inline-block;
+        padding: 2px 5px;
+      }
+      
+      #BorderBox{
+        margin-bottom: 30px;
+        border:6px #2a7189 ridge;
+        background-color:#c4e3ed;
+        border-radius:10px;
+        padding:20px;
+      }
+
+      #BorderBox2{
+        margin-bottom: 30px;
+        border:6px 	#FA8072 ridge;
+        background-color: #FFE4E1;
+        border-radius:10px;
+        padding:20px;
+      }
+
+      #BorderBox3{
+        margin-bottom: 30px;
+        border:6px 	#3CB371 ridge;
+        background-color: #F0FFF0;
+        border-radius:10px;
+        padding:20px;
+      }
+
+      .btn-9{ 
+        background: #ecaf0d;
+        border-bottom: 3px solid #b3850c;
+        -webkit-box-shadow: inset 0 -3px #b3850c;
+        box-shadow: inset 0 -3px #b3850c;
+        border-radius: 30px;
+        margin-top: 15px;
+      }
+      .btn-10{ 
+        background: #48D1CC;
+        border-bottom: 3px solid #008080;
+        -webkit-box-shadow: inset 0 -3px #008080;
+        box-shadow: inset 0 -3px #008080;
+        border-radius: 30px;
+        margin-top: 15px;
+      }
+
+
+
+    </style>
+  </head>
+  <body  ng-app="application" ng-controller="appController" >
+    <header>
+      <div id="left_header">Hyperledger Fabric  Application</div>
+      <i id="right_header">Example Blockchain Application for Introduction to Hyperledger Fabric LFS171x</i>
+    </header>
+
+    <div id="body">
+      <div id="BorderBox" >
+        <div class="form-group">
+          <label style="font-size:18px;">Query All Card Payment</label>
+          <br>
+          Channel:
+          <select name="Channel" class="form-control" ng-model="queryCPR_channel">
+            <option value="channelall">全節點</option>
+            <option value="channel12">B Bank</option>
+          </select>
+          <p><input id="queryAllCardPayment" type="submit" value="Query" class="btn btn-9" ng-click="queryAllCardPayment()"></p>
+        </div>
+  
+        <table id="all_cardpayment" class="table" align="center">
+
+          <tr>
+            <th>ID</th>
+            <th>AcquiringBank</th>
+            <th>acquiringDate</th>
+            <th>UploadDate</th>
+            <th>Size </th>
+            <th>IPFS Hash</th>
+            <th>User</th>
+            <th>Download</th>
+            <th>Delete</th>
+          </tr>
+
+          <tr ng-repeat="cardpayment in all_cardpayment">
+            <td>{{cardpayment.Key}}</td>
+            <td>{{cardpayment.acquiringBank}}</td>
+            <td>{{cardpayment.acquiringDate}}</td>
+            <td>{{cardpayment.uploadDate}}</td>
+            <td>{{cardpayment.size}}</td>
+            <td id='ipfsid'>{{cardpayment.ipfsHash}}</td>
+            <td>{{cardpayment.userId}}</td>
+            <td ><a href="http://localhost:8000/ipfs_download/{{cardpayment.ipfsHash}}" class="btn btn-primary">Download</a></td>
+            <td><a href="http://localhost:8000/delete_cardpayment/{{cardpayment.Key}}" class="btn btn-danger">Delete</a></td>
+          </tr>
+        </table>
+
+        <div class="form-group">
+          <label style="font-size:18px;"> Create Card Payment Record</label>
+          <h5 style="color:green;margin-bottom:2%" id="success_create">Success! Tx ID: {{create_cardpayment}}</h5>
+          <br>
+          <form>
+            AcquiringBank:
+               <select name="AcquiringBank" class="form-control" ng-model="cardpayment.acquiringbank">
+                　<option value="000001">A Bank</option>
+                　<option value="000002">B Bank</option>
+                　<option value="000003">C Bank</option>
+                　<option value="000004">D Bank</option>
+                  <option value="000005">E Bank</option>
+               </select>
+            AcquiringDate: <input id="createName" class="form-control" type="date" ng-model="cardpayment.acquiringdate"> 
+            Upload File: <input  type="file" id="CPRfile"   ng-model="file">
+            Channel:
+            <select name="Channel" class="form-control" ng-model="cardpayment.channel">
+              <option value="channelall">全節點</option>
+              <option value="channel12">B Bank</option>
+            </select>
+            
+            <input id="createSubmit" type="submit" value="Create" class="btn btn-9" ng-click="recordCardPayment()"> 
+          </form>
+        
+        </div>
+      </div>
+
+      <div id="BorderBox2">
+        <div class="form-group">
+          <label style="font-size:18px;">Query All Settlement Report</label>
+          <p><input id="querySettlementReport" type="submit" value="Query" class="btn btn-10" ng-click="queryAllSR()"></p>
+        </div>
+  
+        <table id="all_settlementreport" class="table" align="center">
+
+          <tr>
+            <th>ID</th>
+            <th>Report Type</th>
+            <th>Settle Date</th>
+            <th>UploadDate</th>
+            <th>Settle Bank</th>
+            <th>Receive Bank</th>
+            <th>Size </th>
+            <th>IPFS Hash</th>
+            <th>User</th>
+            <th>Download</th>
+            <th>Delete</th>
+          </tr>
+
+          <tr ng-repeat="settlementreport in all_settlementreport">
+            <td>{{settlementreport.Key}}</td>
+            <td>{{settlementreport.reporttype}}</td>
+            <td>{{settlementreport.settledate}}</td>
+            <td>{{settlementreport.uploadDate}}</td>
+            <td>{{settlementreport.settleBank}}</td>
+            <td>{{settlementreport.receivebank}}</td>
+            <td>{{settlementreport.size}}</td>
+            <td id='ipfsid'>{{settlementreport.ipfsHash}}</td>
+            <td>{{settlementreport.userId}}</td>
+            <td ><a href="http://localhost:8000/ipfs_download/{{settlementreport.ipfsHash}}" class="btn btn-primary">Download</a></td>
+            <td><a href="http://localhost:8000/delete_cardpayment/{{settlementreport.Key}}" class="btn btn-danger">Delete</a></td>
+          </tr>
+        </table>
+        
+        <div class="form-group">
+          <label style="font-size:18px;">Create Settlement Report Record</label>
+          
+          <br>
+          <form>
+            Enter Report Type: 
+            <select name="ReportType" class="form-control" ng-model="settlementreport.reporttype">
+              <option value="收付淨額報表">收付淨額報表</option>
+              <option value="帳務撥款報表">帳務撥款報表</option>
+            </select>
+            Enter date of Settle Date: <input id="createName" class="form-control" type="date" ng-model="settlementreport.settledate"> 
+            Settle Bank:
+               <select name="SettleBank" class="form-control" ng-model="settlementreport.settlebank">
+                 　<option value="000001">A Bank</option>
+                　 <option value="000002">B Bank</option>
+                　 <option value="000003">C Bank</option>
+                　 <option value="000004">D Bank</option>
+                  <option value="000005">E Bank</option>
+               </select>
+             Receive Bank: 
+            <select name="ReceiveBank" class="form-control" ng-model="settlementreport.receivebank">
+              　  <option value="000001">A Bank</option>
+                　<option value="000002">B Bank</option>
+                　<option value="000003">C Bank</option>
+                　<option value="000004">D Bank</option>
+                  <option value="000005">E Bank</option>
+             </select>
+            Upload File: <input  type="file" id="SRfile"  ng-model="file" >
+            Channel:
+            <select name="Channel" class="form-control" ng-model="settlementreport.channel">
+              <option value="channelall">全節點</option>
+              <option value="channel12">單節點</option>
+            </select>
+            <input id="createSubmit" type="submit" value="Create" class="btn btn-10" ng-click="recordSettlementReport()"> 
+          </form>
+         
+        </div>
+      </div>
+
+
+
+      <div id="BorderBox3" >
+        <div class="form-group">
+          <label style="font-size:18px;">Query All Store Data</label>
+          <br>
+          <p><input id="queryAllStoreData" type="submit" value="Query" class="btn btn-9" ng-click="queryAllStoreData()"></p>
+        </div>
+  
+        <table id="all_storedata" class="table" align="center">
+
+          <tr>
+            <th>ID</th>
+            <th>Store Name</th>
+            <th>UploadDate</th>
+            <th>Size </th>
+            <th>IPFS Hash</th>
+            <th>User</th>
+            <th>Download</th>
+            <th>Delete</th>
+          </tr>
+
+          <tr ng-repeat="storedata in all_storedata">
+            <td>{{storedata.Key}}</td>
+            <td>{{storedata.storeId}}</td>
+            <td>{{storedata.uploadDate}}</td>
+            <td>{{storedata.size}}</td>
+            <td id='ipfsid'>{{storedata.ipfsHash}}</td>
+            <td>{{storedata.userId}}</td>
+            <td ><a href="http://localhost:8000/ipfs_download/{{storedata.ipfsHash}}" class="btn btn-primary">Download</a></td>
+            <td><a href="http://localhost:8000/delete_cardpayment/{{storedata.Key}}" class="btn btn-danger">Delete</a></td>
+          </tr>
+        </table>
+
+        <div class="form-group">
+          <label style="font-size:18px;"> Create Store Data</label>
+          <h5 style="color:green;margin-bottom:2%" id="success_create"></h5>
+          <br>
+          <form>
+            Store Name:
+               <select name="StoreId" class="form-control" ng-model="storedata.storeid">
+                　<option value="001">A Store</option>
+                　<option value="002">B Store</option>
+                　<option value="003">C store</option>
+                　<option value="004">D store</option>
+                  <option value="005">E store</option>
+                 
+               </select>
+            Upload File: <input  type="file" id="SDfile"   ng-model="file">
+            
+            <input id="createSubmit" type="submit" value="Create" class="btn btn-9" ng-click="recordStoreData()"> 
+          </form>
+        
+        </div>
+      </div>
+
+
+
+      <div class="form-group">
+        <label>Query a Card Payment Record</label><br>
+        <h5 style="color:red;margin-bottom:2%" id="error_query">Error: Please enter a valid  Id</h5>
+        
+        Enter a ID: <input id="createName" class="form-control" type="text" placeholder="Ex: 3" ng-model="cardpayment_id">
+        <input id="querySubmit" type="submit" value="Query" class="btn btn-primary" ng-click="queryCardPayment()">
+      </div>
+
+      <table id="query_cardpayment" class="table" align="center">
+
+        <tr>
+          <th>ID</th>
+          <th>AcquiringBank</th>
+          <th>acquiringDate</th>
+          <th>Size </th>
+          <th>IPFS Hash</th>
+          <th>User</th>
+          <th>Download</th>
+          <th>Delete</th>
+        </tr>
+
+        <tr>
+          <td>{{query_cardpayment.cprid}}</td>
+          <td>{{query_cardpayment.acquiringBank}}</td>
+          <td>{{query_cardpayment.acquiringDate}}</td>
+          <td>{{query_cardpayment.size}}</td>
+          <td>{{query_cardpayment.ipfsHash}}</td>
+          <td>{{query_cardpayment.userId}}</td>
+          <td><a href="http://localhost:8000/ipfs_download/{{query_cardpayment.ipfsHash}}">Download</a></td>
+          <td><a href="http://localhost:8000/delete_cardpayment/{{query_cardpayment.cprid}}">Delete</a></td>
+          
+        </tr>
+      </table>
+
+     
+
+       
+
+      <div class="form-group">
+        <label>Change Card Paymeny Size and IPFSHash</label><br>
+        <h5 style="color:green;margin-bottom:2%" id="success_holder">Success! Tx ID: {{change_value}}</h5>
+        <h5 style="color:red;margin-bottom:2%" id="error_holder">Error: Please enter a valid Id</h5>
+        Enter a Id : <input class="form-control" name="assetSelect"  ng-model="value.id">
+        Enter Size: <input class="form-control" name="assetSelect"  ng-model="value.newsize">
+        Enter IPFSHash: <input class="form-control" name="assetSelect"  ng-model="value.newipfshash">
+        <input id="transferSubmit" type="submit" value="Change" class="btn btn-primary" ng-click="changeValue()">
+      </div>
+  
+
+    </div>
+  </body> 
+    <!-- requiring the angular page -->
+    <script type="text/javascript" src="app.js"> </script>
+    
+    </html>
